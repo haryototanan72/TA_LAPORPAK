@@ -17,6 +17,11 @@
                                     <td>{{ $laporan->nomor_laporan }}</td>
                                 </tr>
                                 <tr>
+                                <tr>
+                                    <th class="text-secondary">Lokasi</th>
+                                    <td>{{ $laporan->lokasi }}</td>
+                                </tr>
+                                <tr>
                                     <th class="text-secondary">Tanggal</th>
                                     <td>{{ $laporan->created_at->format('d F Y H:i') }}</td>
                                 </tr>

@@ -219,11 +219,11 @@
         </div>
       </div>
     </section>
-    <!-- Recent Posts Section -->
+    <!-- Berita Section -->
     <section id="recent-posts" class="py-5" style="background:#fff;">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h3 class="fw-bold mb-0" style="color:#232b44;">Recent Posts</h3>
+          <h3 class="fw-bold mb-0" style="color:#232b44;">Berita Terbaru</h3>
           <a href="{{ route('news.index') }}" class="btn btn-outline-secondary btn-sm fw-bold">VIEW ALL <i class="bi bi-arrow-up-right"></i></a>
         </div>
         <div class="row g-4">
