@@ -57,6 +57,7 @@
                                     </td>
                                 </tr>
                                 @endif
+
                                 @if($laporan->bukti_laporan)
                             <tr>
                                 <th class="text-secondary align-top">Bukti Laporan</th>
@@ -126,7 +127,15 @@
                                 </td>
                             </tr>
                             @endif
-
+                             @if($laporan->status === 'diverifikasi')
+                                <form action="{{ route('admin.laporan.verify', $laporan->id) }}"
+                                        method="POST" >
+                                        @csrf
+                                        <button type="submit" class="btn btn-success">
+                                            Kirim Email ke Instansi
+                                        </button>
+                                    </form>
+                                @endif
                             </table>
                         </div>
                         <div class="col-md-6">

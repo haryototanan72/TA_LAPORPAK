@@ -140,6 +140,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 });
+Route::post(
+    '/laporan/{laporan}/verify',
+    [LaporanController::class, 'verifyAndSend']
+)->name('admin.laporan.verify');
+
+Route::get(
+    '/admin/laporan/{nomor_laporan}',
+    [LaporanController::class, 'detail']
+)->name('admin.laporan.detail');
 
 /*
 |--------------------------------------------------------------------------

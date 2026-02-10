@@ -10,7 +10,9 @@ use App\Helpers\GamificationHelper;
 use App\Notifications\LaporanStatusUpdated;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LaporanTerkirim;
 
 class LaporanController extends Controller
 {
@@ -46,7 +48,6 @@ class LaporanController extends Controller
         }
 
         $laporans = $laporan->paginate(10);
-
         return view('admin.laporan.index', compact('laporans'));
     }
 
@@ -64,11 +65,9 @@ class LaporanController extends Controller
             'ciri_khusus'     => 'nullable|string',
         ]);
 
-        // Upload bukti laporan
         $buktiPath = $request->file('bukti_laporan')
             ->store('laporan', 'public');
 
-        // Simpan laporan
         $laporan = Laporan::create([
             'user_id'        => Auth::id(),
             'jenis_laporan'  => $request->jenis_laporan,
@@ -81,14 +80,13 @@ class LaporanController extends Controller
             'status'         => 'diajukan',
         ]);
 
-        // === GAMIFIKASI ===
-        $users = Auth::user(); 
-        $users->points += 10;
-        $users->title = GamificationHelper::getTitle($users->points);
-        $users->save();
+        // Gamifikasi
+        $user = Auth::user();
+        $user->points += 10;
+        $user->title = GamificationHelper::getTitle($user->points);
+        $user->save();
 
-        return redirect()->back()
-            ->with('success', 'Laporan berhasil dikirim! +10 poin 🎉');
+        return back()->with('success', 'Laporan berhasil dikirim! +10 poin 🎉');
     }
 
     /**
@@ -119,8 +117,7 @@ class LaporanController extends Controller
             $complaint->save();
         }
 
-        return redirect()->back()
-            ->with('success', 'Status laporan berhasil diperbarui');
+        return back()->with('success', 'Status laporan berhasil diperbarui');
     }
 
     /**
@@ -130,12 +127,41 @@ class LaporanController extends Controller
     {
         $laporan = Laporan::with([
             'user',
-            'laporanPetugas' => function ($q) {
-                $q->latest('updated_at')->limit(1);
-            }
-        ])->where('nomor_laporan', $nomor_laporan)
-          ->firstOrFail();
+            'laporanPetugas' => fn ($q) => $q->latest()->limit(1)
+        ])
+        ->where('nomor_laporan', $nomor_laporan)
+        ->firstOrFail();
 
         return view('admin.laporan.detaillaporan', compact('laporan'));
     }
+
+    /**
+     * Verifikasi & Kirim ke Instansi (EMAIL)
+     */
+    public function verifyAndSend(Laporan $laporan)
+{
+    if ($laporan->status !== 'diverifikasi') {
+        return back()->with('error', 'Laporan harus diverifikasi terlebih dahulu.');
+    }
+
+    // Generate PDF
+    $pdf = Pdf::loadView('pdf.laporan', [
+        'laporan' => $laporan
+    ]);
+
+    // Kirim Email ke Instansi
+    Mail::to(config('laporpak.instansi_email'))
+    ->send(new LaporanTerkirim($laporan, $pdf));
+
+    // Update status laporan
+    $laporan->update([
+        'status'      => 'dikirim',
+        'verified_at' => now(),
+        'sent_at'     => now(),
+    ]);
+
+    return redirect()
+        ->route('admin.laporan.detail', $laporan->nomor_laporan)
+        ->with('success', 'Laporan berhasil dikirim ke instansi.');
+}
 }
