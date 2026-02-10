@@ -55,9 +55,9 @@ use Illuminate\Support\Facades\Storage;
                     <li class="nav-item">
                         <a class="nav-link active" href="{{ route('news.index') }}">Berita</a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="#">Tentang</a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </div>

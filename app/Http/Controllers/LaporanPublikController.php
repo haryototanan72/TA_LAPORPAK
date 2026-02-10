@@ -29,7 +29,7 @@ class LaporanPublikController extends Controller
         // Validasi input
         $request->validate([
             'jenis_laporan' => 'required|in:Privat,Publik',
-            'bukti_laporan' => 'required|file|mimes:jpg,jpeg,png,mp4|max:10240', // max 10MB
+            'bukti_laporan' => 'required|file|mimes:jpg,jpeg,png,mp4|max:51200', // max 50MB
             'lokasi' => 'required|string|max:255',
             'kategori_laporan' => 'required|in:Jalan Rusak,Jembatan Rusak,Banjir',
             'deskripsi_laporan' => 'required|string|max:1000',

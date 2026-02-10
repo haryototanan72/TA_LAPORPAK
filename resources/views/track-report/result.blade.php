@@ -143,7 +143,7 @@
                     @endif
                     @if($report->foto)
                     <div class="md:col-span-2">
-                        <p class="font-semibold text-gray-600 mb-2">Foto:</p>
+                        <p class="font-semibold text-gray-600 mb-2">Foto/Video:</p>
                         <img src="{{ asset('storage/' . $report->foto) }}" alt="Foto Laporan" class="max-w-full h-auto rounded-lg shadow">
                     </div>
                     @endif

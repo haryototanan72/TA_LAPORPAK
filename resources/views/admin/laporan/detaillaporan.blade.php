@@ -58,40 +58,75 @@
                                 </tr>
                                 @endif
                                 @if($laporan->bukti_laporan)
-                                <tr>
-                                    <th class="text-secondary align-top">Bukti Laporan</th>
-                                    <td>
-                                        <div style="border:1px solid #ddd; border-radius:8px; padding:8px; width:140px; background:#f8f9fa; display:flex; align-items:center; justify-content:center;">
+                            <tr>
+                                <th class="text-secondary align-top">Bukti Laporan</th>
+                                <td>
+                                    @php
+                                        $ext = pathinfo($laporan->bukti_laporan, PATHINFO_EXTENSION);
+                                        $isVideo = in_array(strtolower($ext), ['mp4', 'mov', 'avi', 'mkv', 'webm']);
+                                    @endphp
+
+                                    <div style="border:1px solid #ddd; border-radius:8px; padding:8px; width:140px; background:#f8f9fa; display:flex; align-items:center; justify-content:center;">
+                                        @if($isVideo)
+                                            <video id="buktiLaporanVideo" controls style="max-width:120px; max-height:120px; border-radius:6px; cursor:pointer; object-fit:cover;">
+                                                <source src="{{ asset('storage/' . $laporan->bukti_laporan) }}" type="video/{{ $ext }}">
+                                                Browser Anda tidak mendukung pemutaran video.
+                                            </video>
+                                        @else
                                             <img src="{{ asset('storage/' . $laporan->bukti_laporan) }}" alt="Bukti Laporan" style="max-width:120px; max-height:120px; object-fit:cover; border-radius:6px; cursor:pointer;" id="buktiLaporanImg">
-                                        </div>
-                                        <!-- Modal untuk preview gambar besar -->
-                                        <div id="buktiModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
-                                            <div style="position:relative; display:flex; align-items:center; justify-content:center; height:100vh;">
+                                        @endif
+                                    </div>
+
+                                    <!-- Modal untuk preview gambar/video besar -->
+                                    <div id="buktiModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+                                        <div style="position:relative; display:flex; align-items:center; justify-content:center; height:100vh;">
+                                            @if($isVideo)
+                                                <video controls autoplay style="max-width:80vw; max-height:80vh; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.3);">
+                                                    <source src="{{ asset('storage/' . $laporan->bukti_laporan) }}" type="video/{{ $ext }}">
+                                                    Browser Anda tidak mendukung video.
+                                                </video>
+                                            @else
                                                 <img src="{{ asset('storage/' . $laporan->bukti_laporan) }}" alt="Bukti Laporan Besar" style="max-width:80vw; max-height:80vh; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.3);">
-                                                <button id="closeBuktiModal" style="position:absolute; top:20px; right:20px; background:#fbb03b; color:#fff; border:none; border-radius:50%; width:40px; height:40px; font-size:22px; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer;">&times;</button>
-                                            </div>
+                                            @endif
+
+                                            <button id="closeBuktiModal" style="position:absolute; top:20px; right:20px; background:#fbb03b; color:#fff; border:none; border-radius:50%; width:40px; height:40px; font-size:22px; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer;">&times;</button>
                                         </div>
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                var img = document.getElementById('buktiLaporanImg');
-                                                var modal = document.getElementById('buktiModal');
-                                                var closeBtn = document.getElementById('closeBuktiModal');
-                                                if(img && modal && closeBtn) {
+                                    </div>
+
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var img = document.getElementById('buktiLaporanImg');
+                                            var video = document.getElementById('buktiLaporanVideo');
+                                            var modal = document.getElementById('buktiModal');
+                                            var closeBtn = document.getElementById('closeBuktiModal');
+
+                                            if (modal && closeBtn) {
+                                                // Untuk gambar
+                                                if (img) {
                                                     img.addEventListener('click', function() {
                                                         modal.style.display = 'flex';
                                                     });
-                                                    closeBtn.addEventListener('click', function() {
-                                                        modal.style.display = 'none';
-                                                    });
-                                                    modal.addEventListener('click', function(e) {
-                                                        if(e.target === modal) modal.style.display = 'none';
+                                                }
+                                                // Untuk video
+                                                if (video) {
+                                                    video.addEventListener('click', function() {
+                                                        modal.style.display = 'flex';
                                                     });
                                                 }
-                                            });
-                                        </script>
-                                    </td>
-                                </tr>
-                                @endif
+                                                // Tutup modal
+                                                closeBtn.addEventListener('click', function() {
+                                                    modal.style.display = 'none';
+                                                });
+                                                modal.addEventListener('click', function(e) {
+                                                    if (e.target === modal) modal.style.display = 'none';
+                                                });
+                                            }
+                                        });
+                                    </script>
+                                </td>
+                            </tr>
+                            @endif
+
                             </table>
                         </div>
                         <div class="col-md-6">

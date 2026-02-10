@@ -5,43 +5,37 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Laporan;
-// use checkdate 
+use App\Models\Complaint;
+use App\Helpers\GamificationHelper;
+use App\Notifications\LaporanStatusUpdated;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 class LaporanController extends Controller
 {
+    /**
+     * Menampilkan daftar laporan (Admin)
+     */
     public function index(Request $request)
     {
+        $laporan = Laporan::query();
 
-        $laporan = \App\Models\Laporan::query();
-
-        // Filter
         if ($request->filled('status')) {
             $laporan->where('status', $request->status);
         }
 
-        // Filter berdasarkan tanggal
         if ($request->filled('tanggal')) {
-            if ($request->tanggal === 'terbaru') {
-                $laporan->orderBy('created_at', 'desc');
-            } elseif ($request->tanggal === 'terlama') {
-                $laporan->orderBy('created_at', 'asc');
-            }
+            $laporan->orderBy(
+                'created_at',
+                $request->tanggal === 'terlama' ? 'asc' : 'desc'
+            );
         } else {
-            // Default: urutkan terbaru
             $laporan->orderBy('created_at', 'desc');
         }
 
-        // // Pastikan data dummy selalu tampil untuk admin
-        // if (auth()->check() && auth()->user()->role === 'admin') {
-        //     // Jangan filter hanya milik user tertentu, biarkan tampil semua
-        // }
-
-        // Sorting
         if ($request->filled('sort')) {
             switch ($request->sort) {
-                case 'terbaru':
-                    $laporan->orderBy('created_at', 'desc');
-                    break;
                 case 'prioritas':
                     $laporan->orderBy('prioritas', 'desc');
                     break;
@@ -49,8 +43,6 @@ class LaporanController extends Controller
                     $laporan->orderBy('status');
                     break;
             }
-        } else {
-            $laporan->orderBy('created_at', 'desc'); // Default sort
         }
 
         $laporans = $laporan->paginate(10);
@@ -58,46 +50,92 @@ class LaporanController extends Controller
         return view('admin.laporan.index', compact('laporans'));
     }
 
-
-    public function updateStatus(Request $request, $nomor_laporan)
+    /**
+     * Menyimpan laporan baru (USER) + GAMIFIKASI
+     */
+    public function store(Request $request)
     {
-        $validStatuses = [
-            'diajukan', 'diverifikasi', 'diterima', 'ditolak', 'ditindaklanjuti', 'ditanggapi', 'selesai'
-        ];
-
         $request->validate([
-            'status' => 'required|in:' . implode(',', $validStatuses)
+            'kategori'        => 'required',
+            'lokasi'          => 'required|string',
+            'deskripsi'       => 'required|string',
+            'jenis_laporan'   => 'required|in:Privat,Publik',
+            'bukti_laporan'   => 'required|file|mimes:jpg,jpeg,png,pdf',
+            'ciri_khusus'     => 'nullable|string',
         ]);
 
-        $laporan = Laporan::where('nomor_laporan', $nomor_laporan)->firstOrFail();
+        // Upload bukti laporan
+        $buktiPath = $request->file('bukti_laporan')
+            ->store('laporan', 'public');
+
+        // Simpan laporan
+        $laporan = Laporan::create([
+            'user_id'        => Auth::id(),
+            'jenis_laporan'  => $request->jenis_laporan,
+            'bukti_laporan'  => $buktiPath,
+            'lokasi'         => $request->lokasi,
+            'ciri_khusus'    => $request->ciri_khusus,
+            'kategori'       => $request->kategori,
+            'deskripsi'      => $request->deskripsi,
+            'nomor_laporan'  => 'LP-' . strtoupper(Str::random(8)),
+            'status'         => 'diajukan',
+        ]);
+
+        // === GAMIFIKASI ===
+        $users = Auth::user(); 
+        $users->points += 10;
+        $users->title = GamificationHelper::getTitle($users->points);
+        $users->save();
+
+        return redirect()->back()
+            ->with('success', 'Laporan berhasil dikirim! +10 poin 🎉');
+    }
+
+    /**
+     * Update status laporan (Admin)
+     */
+    public function updateStatus(Request $request, $nomor_laporan)
+    {
+        $request->validate([
+            'status' => 'required|in:diajukan,diverifikasi,diterima,ditolak,ditindaklanjuti,ditanggapi,selesai'
+        ]);
+
+        $laporan = Laporan::where('nomor_laporan', $nomor_laporan)
+            ->with('user')
+            ->firstOrFail();
+
         $laporan->status = $request->status;
         $laporan->save();
 
-        // Kirim notifikasi ke user pelapor
         if ($laporan->user) {
-            $laporan->user->notify(new \App\Notifications\LaporanStatusUpdated($laporan));
+            $laporan->user->notify(
+                new LaporanStatusUpdated($laporan)
+            );
         }
 
-        // Sinkronkan status ke complaint jika ada relasi nomor laporan
-        $complaint = \App\Models\Complaint::where('name', $laporan->nomor_laporan)->first();
+        $complaint = Complaint::where('name', $laporan->nomor_laporan)->first();
         if ($complaint) {
             $complaint->status = $request->status;
             $complaint->save();
         }
 
-        return redirect()->back()->with('success', 'Status laporan berhasil diperbarui');
+        return redirect()->back()
+            ->with('success', 'Status laporan berhasil diperbarui');
     }
 
+    /**
+     * Detail laporan (Admin)
+     */
     public function detail($nomor_laporan)
     {
-        $laporan = Laporan::with(['user', 'laporanPetugas' => function($q) {
-            $q->latest('updated_at')->limit(1);
-        }])->where('nomor_laporan', $nomor_laporan)->firstOrFail();
-        return view('admin.laporan.detaillaporan', compact('laporan'));
-    }
+        $laporan = Laporan::with([
+            'user',
+            'laporanPetugas' => function ($q) {
+                $q->latest('updated_at')->limit(1);
+            }
+        ])->where('nomor_laporan', $nomor_laporan)
+          ->firstOrFail();
 
-    public function show(Laporan $laporan)
-    {
-        return view('admin.laporan.index', compact('laporan'));
+        return view('admin.laporan.detaillaporan', compact('laporan'));
     }
 }

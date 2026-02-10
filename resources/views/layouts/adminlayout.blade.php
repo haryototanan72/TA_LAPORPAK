@@ -135,7 +135,7 @@
       <ul>
         <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
         <li><a href="{{ route('admin.laporan.index') }}" class="{{ request()->routeIs('admin.laporan.index') ? 'active' : '' }}"><i class="bi bi-chat-left-text"></i> <span>Laporan</span></a></li>
-        <li><a href="{{ route('admin.feedback.index') }}" class="{{ request()->routeIs('admin.feedback.*') ? 'active' : '' }}"><i class="bi bi-chat-dots"></i> <span>Umpan Balik</span></a></li>
+        <li><a href="{{ route('admin.gamification.index') }}" class="{{ request()->routeIs('admin.gamification.index') ? 'active' : '' }}"><i class="bi bi-graph-up text-purple"></i> <span>Gamifikasi</span></a></li>
         <li><a href="{{ route('admin.user.index') }}" class="{{ request()->routeIs('admin.user.index') ? 'active' : '' }}"><i class="bi bi-people"></i> <span>Pengguna</span></a></li>
         <li class="dropdown">
   <a href="#" class="dropdown-toggle d-flex align-items-center {{ request()->routeIs('admin.petugas.*') || request()->routeIs('admin.petugas.laporan-tugas.*') ? 'active' : '' }}" data-bs-toggle="dropdown" aria-expanded="false">
@@ -167,7 +167,7 @@
     <div style="flex:1;display:flex;flex-direction:column;min-height:100vh;">
       <div class="header">
         <div class="search-bar">
-          <input type="text" class="form-control" placeholder="Search" style="width:100%;">
+          {{-- <input type="text" class="form-control" placeholder="Search" style="width:100%;"> --}}
         </div>
         <div class="profile">
           <i class="bi bi-bell" style="font-size:1.3rem;margin-right:18px;position:relative;"><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.7em;">6</span></i>

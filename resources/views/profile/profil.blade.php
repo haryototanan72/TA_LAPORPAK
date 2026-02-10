@@ -144,8 +144,8 @@
     </div>
 @endif
 
+@endsection
 @section('scripts')
 <script>
     // No script needed
 </script>
-@endsection

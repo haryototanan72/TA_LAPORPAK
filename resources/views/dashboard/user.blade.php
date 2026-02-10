@@ -28,11 +28,13 @@
           <li><a href="#" class="active">Dashboard</a></li>
           <li><a href="#statistik">Statistik</a></li>
           <li><a href="#kategori">Kategori</a></li>
+          <li><a href="{{ route('faq') }}">FAQ</a></li>
+          <li><a href="{{ route('notifikasi.index') }}">Notifikasi</a></li>
           {{-- <li><a href="{{ route('laporan.index') }}">Laporan Saya</a></li> --}}
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-      <li><a href="{{ route('notifikasi.index') }}" class="{{ request()->routeIs('notifikasi.index') ? 'active' : '' }}"><i class="bi bi-bell"></i> Notifikasi</a></li>
+
 @auth
       @if(auth()->user()->role === 'user')
       <!-- User Profile Dropdown -->
@@ -87,7 +89,7 @@
           <div class="col-lg-8 d-flex flex-column justify-content-center text-white">
             <h1 class="fw-bold display-4 mb-2">LAYANAN PENGADUAN ONLINE</h1>
             <p class="fs-5 mb-3">Laporkan segera saat Anda mempunyai informasi Jalan atau Jembatan Nasional Rusak</p>
-            <a href="{{ route('profile.form_laporan') }}" id="btn-lapor" class="btn btn-danger btn-lg px-4 py-2">LAPOR!</a>
+            <a href="{{ route('laporan.form_laporan') }}" id="btn-lapor" class="btn btn-danger btn-lg px-4 py-2">LAPOR!</a>
           </div>
         </div>
       </div>
@@ -184,8 +186,8 @@
           <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
             <div class="card-kategori text-center shadow">
               <i class="bi bi-graph-up text-purple"></i>
-              <h5><a href="{{ route('user.laporan.ringkasan') }}">Laporan Masuk &amp; Selesai &gt;</a></h5>
-              <p>Data Laporan Masuk Tahun 2025</p>
+              <h5><a href="{{ route('leaderboard.index') }}">Lihat Leaderboard Pelapor &gt;</a></h5>
+              <p>Jadi Pelapor Teraktif dan dapatkan Title!</p>
             </div>
           </div>
           <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="300">

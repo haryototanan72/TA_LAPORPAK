@@ -1,124 +1,150 @@
 <?php
-
+// User Controllers
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TrackReportController;
+use App\Http\Controllers\KondisiJalanController;
 use App\Http\Controllers\LaporanPublikController;
+use App\Http\Controllers\UserLaporanController;
+use App\Http\Controllers\User\LeaderboardController;
+
+// Admin Controllers
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PetugasController;
-use App\Http\Controllers\TrackReportController;
-use App\Http\Controllers\LandingController;
-use App\Http\Controllers\KondisiJalanController; // Kondisi Jalan
-use App\Http\Controllers\StatistikController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserLaporanController;
+use App\Http\Controllers\Admin\GamificationController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\BeritaController;
 
+/*
+|--------------------------------------------------------------------------
+| 🔹 PUBLIC ROUTES
+|--------------------------------------------------------------------------
+*/
 
-// -----------------------------
-// 🔹 Public Routes
-// -----------------------------
-
-// Landing page
+// Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-Route::get('/user/laporan/ringkasan', [UserLaporanController::class, 'ringkasan'])->name('user.laporan.ringkasan');
-// Public laporan submission
+// Laporan Publik
 Route::post('/lapor', [LaporanPublikController::class, 'submit'])->name('submit.laporan');
 Route::get('/laporan/masuk', [LaporanPublikController::class, 'index'])->name('laporan.masuk');
 
-// Kondisi Jalan
-Route::get('/kondisi-jalan', [KondisiJalanController::class, 'index'])->name('petakondisi.index');
+// Ringkasan Laporan User (Public View)
+Route::get('/user/laporan/ringkasan', [UserLaporanController::class, 'ringkasan'])
+    ->name('user.laporan.ringkasan');
 
-// News (Public)
+// Kondisi Jalan
+Route::get('/kondisi-jalan', [KondisiJalanController::class, 'index'])
+    ->name('petakondisi.index');
+
+// News
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{id}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
-// FAQ (Public)
-use App\Http\Controllers\Admin\FaqController;
+// FAQ Public
 Route::get('/faq', [FaqController::class, 'publicIndex'])->name('faq');
 
-// Statistik (Uncomment if needed)
-// Route::get('/statistik', [StatistikController::class, 'index'])->name('statistik');
-
-// Tracking routes
+// Tracking Laporan
 Route::get('/track', [TrackReportController::class, 'showTrackPage'])->name('track.show');
 Route::post('/track/search', [TrackReportController::class, 'search'])->name('track.search');
 
-// -----------------------------
-// 🔒 Authenticated User Routes
-// -----------------------------
+// Leaderboard User
+Route::middleware(['auth'])->group(function () {
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])
+        ->name('leaderboard.index');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| 🔒 AUTHENTICATED USER ROUTES
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Notifikasi user
-    Route::get('/notifikasi', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifikasi.index');
-    // Dashboard
+
+    // Dashboard User
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
 
-    // Profile Page
+    // Notifikasi
+    Route::get('/notifikasi', [NotificationController::class, 'index'])
+        ->name('notifikasi.index');
+
+    // Profile
     Route::get('/profile', fn () => view('profile.profil'))->name('profile.index');
-    Route::get('/profile/show', fn () => redirect()->route('profile.index'))->name('profile.show');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Feedback User pada laporan
-    Route::get('/laporan/{id}/feedback-user-form', [\App\Http\Controllers\LaporanController::class, 'feedbackUserForm'])->name('laporan.feedbackUserForm');
-    Route::post('/laporan/{id}/feedback-user', [\App\Http\Controllers\LaporanController::class, 'feedbackUser'])->name('laporan.feedbackUser');
+    // History Laporan User
+    Route::resource('laporan', \App\Http\Controllers\LaporanController::class)
+        ->except(['create', 'store']);
 
-    // History Laporan User (lihat, edit, hapus, detail)
-    Route::resource('laporan', \App\Http\Controllers\LaporanController::class)->except(['create', 'store']);
+    // Form Laporan
+    Route::get('/lapor', fn () => view('laporan.form_laporan'))
+        ->name('laporan.form_laporan');
 
-    // Form laporan
-    Route::get('/lapor', fn () => view('profile.form_laporan'))->name('profile.form_laporan');
 
-    // -----------------------------
-    // 🔐 Admin Routes (Prefix & Name: admin.)
-    // -----------------------------
+    /*
+    |--------------------------------------------------------------------------
+    | 🔐 ADMIN ROUTES
+    |--------------------------------------------------------------------------
+    */
+
     Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('laporan', App\Http\Controllers\Admin\LaporanController::class)->except(['create', 'store', 'edit', 'update', 'show']);
 
-// Route untuk halaman tugas laporan petugas
-Route::prefix('petugas')->name('petugas.')->group(function () {
-    Route::get('laporan-tugas', [\App\Http\Controllers\Petugas\LaporanTugasController::class, 'index'])->name('laporan-tugas.index');
-    Route::put('laporan-tugas/{id}/update', [\App\Http\Controllers\Petugas\LaporanTugasController::class, 'updateStatus'])->name('laporan-tugas.update');
-});
-        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+        // Dashboard Admin
+        Route::get('/dashboard', [DashboardController::class, 'admin'])
+            ->name('dashboard');
 
         // Laporan Admin
-        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/laporan/{laporan}', [LaporanController::class, 'detail'])->name('laporan.detail');
-        Route::put('/laporan/{laporan}/status', [LaporanController::class, 'updateStatus'])->name('laporan.updateStatus');
+        Route::get('/laporan', [LaporanController::class, 'index'])
+            ->name('laporan.index');
 
-        // Manajemen Pengguna
-        Route::get('/pengguna', [UserController::class, 'index'])->name('user.index');
-        Route::post('/pengguna/{id}/update-status', [UserController::class, 'updateStatus'])->name('user.updateStatus');
+        Route::get('/laporan/{laporan}', [LaporanController::class, 'detail'])
+            ->name('laporan.detail');
 
-        // Berita (Admin)
-        Route::get('/berita', [\App\Http\Controllers\Admin\BeritaController::class, 'index'])->name('berita.index');
-        Route::get('/berita/create', [\App\Http\Controllers\Admin\BeritaController::class, 'create'])->name('berita.create');
-        Route::post('/berita', [\App\Http\Controllers\Admin\BeritaController::class, 'store'])->name('berita.store');
-        Route::get('/berita/{berita}/edit', [\App\Http\Controllers\Admin\BeritaController::class, 'edit'])->name('berita.edit');
-        Route::put('/berita/{berita}', [\App\Http\Controllers\Admin\BeritaController::class, 'update'])->name('berita.update');
-        Route::delete('/berita/{berita}', [\App\Http\Controllers\Admin\BeritaController::class, 'destroy'])->name('berita.destroy');
+        Route::put('/laporan/{laporan}/status', [LaporanController::class, 'updateStatus'])
+            ->name('laporan.updateStatus');
 
-        // CRUD Petugas
-        Route::get('petugas/verifikasi', [PetugasController::class, 'verifikasi'])->name('petugas.verifikasi');
-        Route::resource('petugas', PetugasController::class)
-            ->except(['show'])
-            ->parameters(['petugas' => 'petugas']);
+        // 🏆 GAMIFICATION & LEADERBOARD (GANTI FEEDBACK)
+        Route::get('/gamification', [GamificationController::class, 'index'])
+            ->name('gamification.index');
 
-        // CRUD FAQ (Admin)
-        Route::resource('faq', App\Http\Controllers\Admin\FaqController::class)->except(['show']);
+        // Manajemen User
+        Route::get('/pengguna', [UserController::class, 'index'])
+            ->name('user.index');
 
-        // CRUD Feedback (Admin)
-        Route::resource('feedback', App\Http\Controllers\Admin\FeedbackController::class)->except(['show']);
+        Route::post('/pengguna/{id}/update-status', [UserController::class, 'updateStatus'])
+            ->name('user.updateStatus');
 
-        // Route pemberian tugas laporan ke petugas
-        Route::post('petugas/{petugas}/kirim-laporan', [\App\Http\Controllers\Admin\PetugasLaporanController::class, 'store'])->name('petugas-laporan.store');
+        // Berita Admin
+        Route::resource('berita', BeritaController::class);
+
+        // Petugas
+        Route::resource('petugas', PetugasController::class)->except(['show']);
+
+        // FAQ Admin
+        Route::resource('faq', FaqController::class)->except(['show']);
+
+        // Tugas Laporan Petugas
+        Route::prefix('petugas')->name('petugas.')->group(function () {
+            Route::get('laporan-tugas', [\App\Http\Controllers\Petugas\LaporanTugasController::class, 'index'])
+                ->name('laporan-tugas.index');
+
+            Route::put('laporan-tugas/{id}/update', [\App\Http\Controllers\Petugas\LaporanTugasController::class, 'updateStatus'])
+                ->name('laporan-tugas.update');
+        });
     });
-});use App\Http\Controllers\NotificationController;
-Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifikasi.index');
+});
 
-// -----------------------------
-// 🛡️ Auth Routes (Laravel Breeze/Fortify/etc.)
-// -----------------------------
+/*
+|--------------------------------------------------------------------------
+| 🔐 AUTH ROUTES (Breeze / Fortify)
+|--------------------------------------------------------------------------
+*/
+
 require __DIR__.'/auth.php';

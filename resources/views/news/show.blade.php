@@ -46,7 +46,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="{{ route('news.index') }}">Berita</a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="#">Kategori</a>
                     </li>
                     <li class="nav-item">
@@ -54,7 +54,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Kontak</a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </div>

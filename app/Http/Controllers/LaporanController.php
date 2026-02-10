@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class LaporanController extends Controller
 {
@@ -15,7 +16,7 @@ class LaporanController extends Controller
         $success = $request->query('success');
         $errors = $request->query('errors');
 
-        return view('profile.form_laporan', compact('success', 'errors'));
+        return view('laporan.form_laporan', compact('success', 'errors'));
     }
 
     public function submitLaporan(Request $request)
@@ -23,7 +24,7 @@ class LaporanController extends Controller
         // Validasi input
         $validator = Validator::make($request->all(), [
             'jenis_laporan' => 'required',
-            'bukti_laporan' => 'required|file|max:2048',
+            'bukti_laporan' => 'required|file|max:51200',
             'lokasi' => 'required',
             'ciri_khusus_lokasi' => 'nullable', // Ubah 'optional' menjadi 'nullable'
             'kategori_laporan' => 'required',
@@ -65,7 +66,7 @@ class LaporanController extends Controller
                 ], 200);
             }
             // Jika submit biasa (non-AJAX)
-            return redirect()->route('profile.form_laporan')->with('nomor_laporan', $nomor_laporan);
+            return redirect()->route('laporan.form_laporan')->with('nomor_laporan', $nomor_laporan);
 
         } catch (\Exception $e) {
             // Jika terjadi kesalahan, hapus file yang sudah diupload
@@ -77,7 +78,7 @@ class LaporanController extends Controller
                     'error' => $e->getMessage()
                 ], 500);
             }
-            return redirect()->route('profile.form_laporan')->with('error', 'Gagal menyimpan laporan ke database: ' . $e->getMessage());
+            return redirect()->route('laporan.form_laporan')->with('error', 'Gagal menyimpan laporan ke database: ' . $e->getMessage());
         }
     }
 
@@ -86,7 +87,7 @@ class LaporanController extends Controller
      */
     public function index(Request $request)
     {
-        $laporans = Laporan::where('user_id', auth()->id())
+        $laporans = Laporan::where('user_id', Auth::id())
             ->with(['feedbackAdmin.user', 'feedbackUser.user'])
             ->latest()->get();
         return view('laporan.history', compact('laporans'));
@@ -96,17 +97,20 @@ class LaporanController extends Controller
      * Menampilkan detail laporan.
      */
     public function show($id)
-    {
-        $laporan = Laporan::where('user_id', auth()->id())->findOrFail($id);
-        return view('laporan.show', compact('laporan'));
-    }
+{
+    $laporan = Laporan::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->firstOrFail();
+
+    return view('laporan.show', compact('laporan'));
+}
 
     /**
      * Menampilkan form edit laporan.
      */
     public function edit($id)
     {
-        $laporan = Laporan::where('user_id', auth()->id())->findOrFail($id);
+        $laporan = Laporan::where('user_id', Auth::id())->findOrFail($id);
         return view('laporan.edit', compact('laporan'));
     }
 
@@ -115,7 +119,7 @@ class LaporanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $laporan = Laporan::where('user_id', auth()->id())->findOrFail($id);
+        $laporan = Laporan::where('user_id', Auth::id())->findOrFail($id);
         $validator = Validator::make($request->all(), [
             'jenis_laporan' => 'required',
             'lokasi' => 'required',
@@ -149,7 +153,7 @@ class LaporanController extends Controller
     public function destroy($id)
     {
         // Cek apakah laporan ada dan milik user yang sedang login
-        $laporan = Laporan::where('user_id', auth()->id())
+        $laporan = Laporan::where('user_id', Auth::id())
             ->where('id', $id)
             ->first();
 
@@ -174,7 +178,7 @@ class LaporanController extends Controller
      */
     public function feedbackUser(Request $request, $id)
     {
-        $laporan = Laporan::where('user_id', auth()->id())->findOrFail($id);
+        $laporan = Laporan::where('user_id', Auth::id())->findOrFail($id);
 
         // Pastikan laporan sudah selesai dan sudah ada feedback admin
         if ($laporan->status !== 'selesai' || !$laporan->feedbackAdmin) {
@@ -193,7 +197,7 @@ class LaporanController extends Controller
 
         $feedback = new \App\Models\Feedback();
         $feedback->laporan_id = $laporan->id;
-        $feedback->user_id = auth()->id();
+        $feedback->user_id = Auth::id();
         $feedback->rating = $request->rating;
         $feedback->pesan = $request->pesan;
         $feedback->kategori = $laporan->kategori_laporan ?? '-';
@@ -207,7 +211,7 @@ class LaporanController extends Controller
      */
     public function feedbackUserForm($id)
     {
-        $laporan = Laporan::where('user_id', auth()->id())->findOrFail($id);
+        $laporan = Laporan::where('user_id', Auth::id())->findOrFail($id);
         // Pastikan laporan sudah selesai dan sudah ada feedback admin
         if ($laporan->status !== 'selesai' || !$laporan->feedbackAdmin) {
             return redirect()->back()->with('error', 'Feedback hanya dapat diberikan jika laporan sudah selesai dan ada bukti perbaikan dari admin.');

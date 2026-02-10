@@ -126,7 +126,7 @@
                                                                 style="background-color: #fbb03b; color: white;">
                                                             Simpan Perubahan
                                                         </button>
-                                                        <a href="{{ route('profile.form_laporan') }}" 
+                                                        <a href="{{ route('laporan.form_laporan') }}" 
                                                            class="btn btn-light">
                                                             Batal
                                                         </a>

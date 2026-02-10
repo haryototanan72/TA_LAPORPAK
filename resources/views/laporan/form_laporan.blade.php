@@ -240,11 +240,23 @@
                 <div id="jenis_laporan_error" class="error-message"></div>
             </div>
 
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="bukti_laporan">Bukti Laporan <span class="required">*</span></label>
                 <input type="file" class="form-control" id="bukti_laporan" name="bukti_laporan" accept=".jpg,.jpeg,.png,.mp4">
                 <div id="bukti_laporan_error" class="error-message"></div>
+            </div> --}}
+            <div class="form-group">
+                <label for="bukti_laporan">Bukti Laporan <span class="required">*</span></label>
+                <input 
+                    type="file" 
+                    class="form-control" 
+                    id="bukti_laporan" 
+                    name="bukti_laporan"
+                    accept="image/*,video/*" 
+                    capture="environment"> <!-- ini memungkinkan kamera langsung terbuka di HP -->
+                <div id="bukti_laporan_error" class="error-message"></div>
             </div>
+
 
             <div class="form-group">
                 <label for="lokasi">Lokasi Laporan <span class="required">*</span></label>
@@ -435,13 +447,13 @@ $('#preview_koordinat').text('Koordinat: ' + lat + ',' + lon);
                         map.setView(latlng, 16);
                         // Reverse geocoding ke alamat
                         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
-    .then(res => res.json())
-    .then(data => {
-        $('#lokasi').val(data.display_name || (lat + ', ' + lng));
-        // Set hidden koordinat
-        $('#lokasi_hidden').val(lat + ',' + lng);
-$('#preview_koordinat').text('Koordinat: ' + lat + ',' + lng);
-    });
+                        .then(res => res.json())
+                        .then(data => {
+                            $('#lokasi').val(data.display_name || (lat + ', ' + lng));
+                            // Set hidden koordinat
+                            $('#lokasi_hidden').val(lat + ',' + lng);
+                    $('#preview_koordinat').text('Koordinat: ' + lat + ',' + lng);
+                        });
                         btn.prop('disabled', false).html(oldText);
                     }, function(error) {
                         btn.prop('disabled', false).html(oldText);
@@ -458,6 +470,49 @@ $('#preview_koordinat').text('Koordinat: ' + lat + ',' + lng);
                 $('#kategori_laporan').removeAttr('required');
                 $('#deskripsi_laporan').removeAttr('required');
                 $('#ceklis').removeAttr('required');
+                // --- Ambil lokasi otomatis saat user menambahkan bukti ---
+                $('#bukti_laporan').on('click', function() {
+                    // Saat user ingin menambahkan bukti, ambil lokasi saat ini juga
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var lat = position.coords.latitude;
+                            var lng = position.coords.longitude;
+                            var latlng = [lat, lng];
+
+                            // Update marker & map
+                            marker.setLatLng(latlng);
+                            map.setView(latlng, 16);
+
+                            // Reverse geocoding ke alamat (pakai Nominatim)
+                            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    $('#lokasi').val(data.display_name || (lat + ', ' + lng));
+                                    $('#lokasi_hidden').val(lat + ',' + lng);
+                                    $('#preview_koordinat').text('Koordinat: ' + lat + ',' + lng);
+                                })
+                                .catch(() => {
+                                    $('#lokasi').val(lat + ', ' + lng);
+                                    $('#lokasi_hidden').val(lat + ',' + lng);
+                                });
+                        }, function(error) {
+                            console.warn('Gagal ambil lokasi:', error);
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Lokasi tidak dapat diambil',
+                                text: 'Pastikan GPS aktif dan izinkan akses lokasi browser.',
+                                confirmButtonColor: '#f6b23e'
+                            });
+                        }, { enableHighAccuracy: true, timeout: 15000 });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Tidak Didukung',
+                            text: 'Browser Anda tidak mendukung geolokasi.',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                });
 
                 $('#laporanForm').submit(function(e) {
     e.preventDefault();

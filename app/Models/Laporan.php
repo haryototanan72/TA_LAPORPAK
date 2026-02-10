@@ -26,11 +26,16 @@ class Laporan extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
 
     // Relasi ke laporan_petugas berdasarkan laporan_id
     public function laporanPetugas()
     {
         return $this->hasMany(\App\Models\LaporanPetugas::class, 'laporan_id', 'id');
+    }
+    public function laporans()
+    {
+        return $this->hasMany(Laporan::class);
     }
 
     // Relasi ke feedback admin (feedback yang diinput admin)

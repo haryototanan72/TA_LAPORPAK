@@ -8,13 +8,14 @@
                 </a>
             </div>
             <div class="d-flex align-items-center gap-4">
-                <a href="{{ route('notifikasi.index') }}" class="text-decoration-none text-dark fw-semibold {{ request()->routeIs('notifikasi.index') ? 'active' : '' }}">
-                    <i class="bi bi-bell"></i> Notifikasi
-                </a>
-                </a>
-                <a href="{{ route('landing') }}" class="text-decoration-none text-dark fw-semibold {{ request()->routeIs('landing') ? 'active' : '' }}">Beranda</a>
-                <a href="{{ asset('about.html') }}" class="text-decoration-none text-dark fw-semibold">FAQ</a>
-                <a href="#" class="text-decoration-none text-dark fw-semibold">Statistik</a>
+            </a>
+            <a href="{{ route('user.dashboard') }}" class="text-decoration-none text-dark fw-semibold {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">Beranda</a>
+            <a href="#" class="text-decoration-none text-dark fw-semibold">Statistik</a>
+            <a href="#" class="text-decoration-none text-dark fw-semibold">Kategori</a>
+            <a href="{{ route('faq') }}" class="text-decoration-none text-dark fw-semibold">FAQ</a>
+            <a href="{{ route('notifikasi.index') }}" class="text-decoration-none text-dark fw-semibold {{ request()->routeIs('notifikasi.index') ? 'active' : '' }}">
+                <i class="bi bi-bell"></i> Notifikasi
+            </a>
                 
                 <!-- User Profile Dropdown -->
                 <div class="dropdown">
@@ -39,9 +40,9 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a class="dropdown-item d-flex align-items-center gap-2" 
-                               href="{{ route('profile.form_laporan') }}">
+                               href="{{ route('laporan.form_laporan') }}">
                                 <i class="bi bi-person"></i>
-                                Profile
+                                laporan
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>

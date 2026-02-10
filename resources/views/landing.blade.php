@@ -42,7 +42,7 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-      <a href="index.html" class="logo d-flex align-items-center me-auto">
+      <a href="{{ route('landing') }}" class="logo d-flex align-items-center me-auto">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.png" alt=""> -->
         <h1 class="sitename">LaporPak!</h1>
@@ -50,8 +50,8 @@
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="{{ route('news.index') }}" class="text-decoration-none">Beranda<br></a></li>
-          <li><a href="#statistik">Statistik</a></li>
+          <li><a href="{{ route('landing') }}" class="text-decoration-none">Beranda<br></a></li>
+          {{-- <li><a href="#statistik">Statistik</a></li> --}}
           <li><a href="{{ route('faq') }}">FAQ</a></li>
           {{-- <li><a href="#contact">Kontak</a></li>
           <li><a href="{{ route('track.show') }}" class="btn-get-started">Lacak Laporan</a></li> --}}
@@ -217,7 +217,7 @@
     </section>    
     <!-- /end Peta -->
 
-    <!-- Berita Section -->
+    {{-- <!-- Berita Section -->
     <section id="recent-posts" class="py-5" style="background:#fff;">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -295,7 +295,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> --}}
 
     <!-- Kategori Laporan Section -->
     {{-- <section id="kategori" class="min-vh-100 d-flex align-items-center position-relative overflow-hidden">
