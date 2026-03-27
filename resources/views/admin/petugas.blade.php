@@ -40,7 +40,7 @@
 <div class="modal fade" id="kirimPetugasModal{{ $item->id }}" tabindex="-1" aria-labelledby="kirimPetugasModalLabel{{ $item->id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="{{ route('admin.petugas-laporan.store', $item->id) }}" method="POST">
+      <form action="{{ route('admin.petugas.store', $item->id) }}" method="POST">
         @csrf
         <div class="modal-header">
           <h5 class="modal-title" id="kirimPetugasModalLabel{{ $item->id }}">Kirim Tugas ke Petugas</h5>

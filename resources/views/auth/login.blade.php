@@ -120,12 +120,12 @@
             @csrf
 
             <div class="form-group">
-                <input type="email" name="email" id="email" placeholder="Enter your email" value="{{ old('email') }}">
+                <input type="email" name="email" id="email" placeholder="Masukan email Anda" value="{{ old('email') }}">
                 <div id="emailError" class="error"></div>
             </div>
 
             <div class="form-group">
-                <input type="password" name="password" id="password" placeholder="Enter your password">
+                <input type="password" name="password" id="password" placeholder="Masukan password Anda">
                 <div id="passwordError" class="error"></div>
             </div>
 

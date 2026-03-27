@@ -80,14 +80,15 @@ class LaporanController extends Controller
             'status'         => 'diajukan',
         ]);
 
-        // Gamifikasi
+        // Gamifikasi (hanya saat laporan dibuat)
         $user = Auth::user();
-        $user->points += 10;
+        $user->points += 5;
         $user->title = GamificationHelper::getTitle($user->points);
         $user->save();
-
-        return back()->with('success', 'Laporan berhasil dikirim! +10 poin 🎉');
+        
+        return back()->with('success', 'Laporan berhasil dikirim! +5 poin 🎉');
     }
+    
 
     /**
      * Update status laporan (Admin)
@@ -101,11 +102,29 @@ class LaporanController extends Controller
         $laporan = Laporan::where('nomor_laporan', $nomor_laporan)
             ->with('user')
             ->firstOrFail();
-
+        $oldStatus = $laporan->status;
         $laporan->status = $request->status;
         $laporan->save();
+        
+        $user = $laporan->user;
 
-        if ($laporan->user) {
+    if ($user) {
+
+        // Bonus jika diverifikasi pertama kali
+        if ($request->status === 'diverifikasi' && $oldStatus !== 'diverifikasi') {
+            $user->points += 10;
+        }
+
+        // Penalti jika ditolak pertama kali (optional)
+        if ($request->status === 'ditolak' && $oldStatus !== 'ditolak') {
+            $user->points -= 5;
+        }
+
+        $user->title = GamificationHelper::getTitle($user->points);
+        $user->save();
+    }
+
+        if ($laporan->user && $laporan->status === 'diverifikasi') {
             $laporan->user->notify(
                 new LaporanStatusUpdated($laporan)
             );
@@ -145,9 +164,27 @@ class LaporanController extends Controller
     }
 
     // Generate PDF
-    $pdf = Pdf::loadView('pdf.laporan', [
-        'laporan' => $laporan
-    ]);
+    $imagePath = storage_path('app/public/'.$laporan->bukti_laporan);
+
+    $imageBase64 = null;
+
+    if (file_exists($imagePath)) {
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
+        $imageBase64 = 'data:image/' . $imageType . ';base64,' . $imageData;
+    }
+// Ambil koordinat dari kolom lokasi
+$googleMapsUrl = null;
+
+    if (!empty($laporan->lokasi)) {
+        list($lat, $lng) = array_map('trim', explode(',', $laporan->lokasi));
+        $googleMapsUrl = "https://www.google.com/maps?q={$lat},{$lng}";
+    }
+   $pdf = Pdf::loadView('pdf.laporan', [
+    'laporan' => $laporan,
+    'imageBase64' => $imageBase64,
+    'googleMapsUrl' => $googleMapsUrl
+]);
 
     // Kirim Email ke Instansi
     Mail::to(config('laporpak.instansi_email'))

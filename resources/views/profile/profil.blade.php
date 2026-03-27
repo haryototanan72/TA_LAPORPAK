@@ -80,7 +80,7 @@
 
 <div class="profile-header">
     <h1 class="text-3xl font-bold mb-2">Profil Pengguna</h1>
-    <p class="text-lg opacity-90 mb-0">Data lengkap akun Anda</p>
+    <p class="text-lg opacity-90 mb-0">Data Lengkap Akun Anda</p>
     @php
         $avatar = Auth::user()->profile_picture
             ? asset('storage/' . Auth::user()->profile_picture)
@@ -92,6 +92,29 @@
     <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" autocomplete="on">
         @csrf
         @method('PATCH')
+            <!-- Gamification Section -->
+    <div class="info-group mb-4">
+        <label class="text-muted mb-2">Gamifikasi</label>
+
+        <div class="d-flex align-items-center gap-3 p-3"
+            style="background: linear-gradient(135deg, #fbb03b, #ff7e5f); border-radius: 10px; color: white;">
+
+            <div>
+                <div style="font-size: 0.8rem;">Poin</div>
+                <div style="font-size: 1.5rem; font-weight: bold;">
+                   {{ Auth::user()->points ?? 0 }}
+                </div>
+            </div>
+            <div class="vr bg-white"></div>
+
+            <div>
+                <div style="font-size: 0.8rem;">Title</div>
+                <div style="font-size: 1.2rem; font-weight: 600;">
+                    {{ Auth::user()->title ?? 'Pemula' }}
+                </div>
+            </div>
+        </div>
+    </div>
         <div class="grid grid-cols-1 gap-6">
             <div>
                 <label for="name">Nama Lengkap</label>

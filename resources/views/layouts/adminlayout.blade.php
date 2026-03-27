@@ -170,7 +170,7 @@
           {{-- <input type="text" class="form-control" placeholder="Search" style="width:100%;"> --}}
         </div>
         <div class="profile">
-          <i class="bi bi-bell" style="font-size:1.3rem;margin-right:18px;position:relative;"><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.7em;">6</span></i>
+          {{-- notif <i class="bi bi-bell" style="font-size:1.3rem;margin-right:18px;position:relative;"><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.7em;">6</span></i> --}}
           <span class="dropdown">
             <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}" class="avatar" alt="avatar">
             <span class="name">{{ Auth::user()->name }}</span>

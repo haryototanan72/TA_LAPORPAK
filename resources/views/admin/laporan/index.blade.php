@@ -43,7 +43,7 @@
                             <tbody>
                                 @foreach($laporans as $index => $laporan)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $laporans->firstItem() + $index }}</td>
                                     <td>{{ $laporan->nomor_laporan }}</td>
                                     <td>{{ $laporan->user->role === 'user' ? $laporan->user->name : '********************' }}</td>
                                     <td>{{ $laporan->created_at->format('d M Y') }}</td>

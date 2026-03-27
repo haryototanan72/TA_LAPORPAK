@@ -14,11 +14,22 @@
 
     <p>
         <strong>Nomor Laporan:</strong> {{ $laporan->nomor_laporan }} <br>
-        <strong>Lokasi:</strong> {{ $laporan->lokasi }} <br>
         <strong>Kategori:</strong> {{ $laporan->kategori }}<br>
         <strong>Deskripsi:</strong> {{ $laporan->deskripsi }}<br>
         <strong>Tanggal Laporan:</strong> {{ $laporan->created_at->format('d M Y H:i') }}<br>
-        <strong>Bukti Laporan:</strong> {{ $laporan->bukti_laporan }}<br>
+        <strong>Koordinat:</strong> {{ $laporan->lokasi }}<br>
+            <a>Lihat lokasi di Google Maps: </a><br>
+            <a href="{{ $googleMapsUrl }}">
+                {{ $googleMapsUrl }}
+            </a>
+            <br>
+        <strong>Bukti Laporan:</strong><br>
+        @if($imageBase64)
+            <img src="{{ $imageBase64 }}" 
+                style="width:300px; height:auto; margin-top:10px;">
+        @else
+            <p>Gambar tidak tersedia</p>
+        @endif
 
     </p>
 
