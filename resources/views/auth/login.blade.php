@@ -2,117 +2,122 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Log In</title>
+    <title>Login - LaporPak</title>
+
+    <!-- PWA viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             margin: 0;
-            padding: 0;
             font-family: 'Inter', sans-serif;
-            height: 100vh;
+            background: linear-gradient(to bottom right, #1c1c1e, #2c3e50);
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(to bottom right, #1c1c1e, #2c3e50);
+            min-height: 100vh;
         }
+
         .container {
-            background: rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            display: flex;
-            width: 900px;
-            overflow: hidden;
+            padding: 30px 20px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
             backdrop-filter: blur(10px);
         }
-        .form-section {
-            flex: 1;
-            padding: 60px 40px;
+
+        h1 {
             color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .form-section h1 {
-            font-size: 32px;
             margin-bottom: 10px;
+            font-size: 26px;
         }
-        .form-section p {
-            margin-bottom: 30px;
-            font-size: 14px;
+
+        p {
             color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
-        .form-section a {
+
+        a {
             color: #fbbf24;
             text-decoration: none;
             font-weight: 600;
         }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        .form-group input {
+
+        input {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
+            border-radius: 8px;
             border: 1px solid #555;
             background: rgba(255,255,255,0.1);
-            border-radius: 8px;
             color: white;
-            font-size: 14px;
             outline: none;
         }
-        .form-group input::placeholder {
+
+        input::placeholder {
             color: #aaa;
         }
+
         .error {
             color: #ff4d4d;
             font-size: 12px;
             margin-top: 5px;
         }
+
         button {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             background: linear-gradient(to right, #fbbf24, #f59e0b);
-            color: black;
-            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            margin-top: 10px;
         }
-        button:hover {
-            opacity: 0.9;
-        }
-        .image-section {
-            flex: 1;
-            background: url('{{ asset('assets/img/daftar1.png') }}') no-repeat center center/cover;
-            position: relative;
-        }
-        @media (max-width: 768px) {
+
+        /* 🔥 Desktop enhancement */
+        @media (min-width: 768px) {
             .container {
-                flex-direction: column;
-                width: 90%;
+                max-width: 900px;
+                display: flex;
+                padding: 0;
             }
+
+            .form-section {
+                flex: 1;
+                padding: 50px;
+            }
+
             .image-section {
-                height: 200px;
+                flex: 1;
+                background: url('{{ asset('assets/img/daftar1.png') }}') center/cover;
+                border-radius: 0 16px 16px 0;
             }
         }
     </style>
 </head>
-<body style="background: url('{{ asset('assets/img/bgl.png') }}') no-repeat center center/cover; background-size: cover;">
 
+<body>
 
 <div class="container">
+
     <div class="form-section">
         <h1>Masuk</h1>
-        <p>Tidak punya akun<a href="{{ route('register') }}"> Daftar</a></p>
+        <p>Tidak punya akun? <a href="{{ route('register') }}">Daftar</a></p>
 
         @if ($errors->any())
             <div class="error">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
             </div>
         @endif
 
@@ -120,7 +125,7 @@
             @csrf
 
             <div class="form-group">
-                <input type="email" name="email" id="email" placeholder="Masukan email Anda" value="{{ old('email') }}">
+                <input type="email" name="email" id="email" placeholder="Masukan email Anda">
                 <div id="emailError" class="error"></div>
             </div>
 
@@ -133,34 +138,32 @@
         </form>
     </div>
 
-    <div class="image-section">
-        <!-- Background gambar daftar1.png -->
-    </div>
+    <div class="image-section"></div>
+
 </div>
 
 <script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        let valid = true;
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    let valid = true;
 
-        document.getElementById('emailError').innerText = '';
-        document.getElementById('passwordError').innerText = '';
+    document.getElementById('emailError').innerText = '';
+    document.getElementById('passwordError').innerText = '';
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
-        if (email === '') {
-            document.getElementById('emailError').innerText = 'Email is required.';
-            valid = false;
-        }
-        if (password === '') {
-            document.getElementById('passwordError').innerText = 'Password is required.';
-            valid = false;
-        }
+    if (email === '') {
+        document.getElementById('emailError').innerText = 'Email wajib diisi';
+        valid = false;
+    }
 
-        if (!valid) {
-            event.preventDefault();
-        }
-    });
+    if (password === '') {
+        document.getElementById('passwordError').innerText = 'Password wajib diisi';
+        valid = false;
+    }
+
+    if (!valid) event.preventDefault();
+});
 </script>
 
 </body>

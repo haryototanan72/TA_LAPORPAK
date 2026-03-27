@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Laporan</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -57,13 +58,11 @@
         }
 
         .container {
-            max-width: 480px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 32px 24px 28px 24px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            position: relative;
+            max-width: 100%;
+            margin: 0;
+            min-height: 100vh;
+            border-radius: 0;
+            padding: 20px;
         }
 
         .title {
@@ -167,13 +166,11 @@
             border-radius: 8px;
         }
         #map {
-            height: 180px;
-            width: 100%;
-            margin-bottom: 16px;
-            border-radius: 8px;
-            border: 1.5px solid #e0e0e0;
-            overflow: hidden;
-        }
+            h height: 250px;
+                width: 100%;
+                border-radius: 12px;
+                margin-top: 10px;
+            }
         #map iframe {
             width: 100%;
             height: 100%;
@@ -206,6 +203,15 @@
             height: 22px;
             vertical-align: middle;
         }
+    .sticky-submit {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
     </style>
 </head>
 <body>
@@ -253,33 +259,54 @@
                     id="bukti_laporan" 
                     name="bukti_laporan"
                     accept="image/*,video/*" 
-                    capture="environment"> <!-- ini memungkinkan kamera langsung terbuka di HP -->
+                    capture="environment"> <!-- agar memungkinkan kamera langsung terbuka di HP -->
                 <div id="bukti_laporan_error" class="error-message"></div>
             </div>
 
 
             <div class="form-group">
-                <label for="lokasi">Lokasi Laporan <span class="required">*</span></label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="lokasi" placeholder="Cari alamat atau klik peta" autocomplete="off">
-<input type="hidden" id="lokasi_hidden" name="lokasi" />
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" id="btn-lokasi-saya" title="Dapatkan Lokasi Saya">
-                            <span class="d-none d-md-inline">Lokasi Saya</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
-                              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-                            </svg>
-                        </button>
-                    </div>
+            <label for="lokasi">
+                Lokasi Laporan <span class="required">*</span>
+            </label>
+
+            <!-- Input + Button -->
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    id="lokasi" 
+                    placeholder="Cari alamat atau klik peta" 
+                    autocomplete="off"
+                >
+
+                <div class="input-group-append">
+                    <button 
+                        type="button" 
+                        id="btn-lokasi-saya" 
+                        class="btn btn-outline-secondary d-flex align-items-center gap-1"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                        </svg>
+                        <span class="d-none d-md-inline ml-1">Lokasi Saya</span>
+                    </button>
                 </div>
-                <div id="lokasi_error" class="error-message"></div>
-                <div id="map" style="height: 200px;"></div>
             </div>
 
-            <div class="form-group">
+            <!-- Hidden tetap -->
+            <input type="hidden" id="lokasi_hidden" name="lokasi" />
+
+            <!-- Error -->
+            <div id="lokasi_error" class="error-message"></div>
+
+            <!-- Map -->
+            <div id="map" style="height: 220px; border-radius: 10px; margin-top: 10px;"></div>
+        </div>
+
+            {{-- <div class="form-group">
                 <label for="ciri_khusus_lokasi">Ciri Khusus Lokasi <span class="optional">(Optional)</span></label>
                 <input type="text" class="form-control" id="ciri_khusus_lokasi" name="ciri_khusus_lokasi">
-            </div>
+            </div> --}}
 
             <div class="form-group">
                 <label for="kategori_laporan">Kategori Laporan <span class="required">*</span></label>
@@ -306,10 +333,12 @@
                     </label>
                 </div>
                 <div id="pernyataan_error" class="error-message"></div>
-            </div>
+            </div><br><br>
 
-            <a href="{{ url()->previous() }}" class="btn btn-cancel">Cancel</a>
-            <button type="submit" class="btn btn-submit">Kirim</button>
+            {{-- <a href="{{ url()->previous() }}" class="btn btn-cancel">Cancel</a> --}}
+            <div class="sticky-submit">
+            <button type="submit" class="btn btn-submit w-100">Kirim Laporan</button>
+        </div>
         </form>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -1,128 +1,167 @@
-<!-- Header Section -->
-<header class="bg-white shadow-sm border-bottom mb-4">
-    <div class="container py-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <a href="{{ route('landing') }}" class="text-decoration-none">
-                    <h4 class="mb-0 fw-bold" style="color: #fbb03b; font-size: 1.5rem;">LaporPak!</h4>
-                </a>
+<!-- HEADER PWA STYLE -->
+<header class="top-navbar">
+    <!-- LOGO -->
+    <div class="navbar-left">
+        <a href="{{ route('landing') }}" class="brand">
+            LaporPak!
+        </a>
+    </div>
+
+    <!-- MENU -->
+    <div class="navbar-right">
+        <button class="menu-btn" onclick="toggleMenu()">⋮</button>
+
+        <div id="dropdownMenu" class="dropdown-menu">
+            <a href="{{ route('user.dashboard') }}">🏠 Beranda</a>
+            <a href="{{ route('laporan.form_laporan') }}">📄 Buat Laporan</a>
+            <a href="{{ route('laporan.index') }}">📋 Laporan Saya</a>
+            <a href="{{ route('leaderboard.index') }}">🏆 Leaderboard</a>
+            <a href="{{ route('faq') }}">❓ FAQ</a>
+            <a href="{{ route('notifikasi.index') }}">🔔 Notifikasi</a>
+            <a href="{{ route('profile.index') }}">👤 Profile</a>
+
+            <hr>
+
+            <!-- USER INFO (opsional tapi bagus UX) -->
+            <div class="user-info px-3 py-2">
+                <small class="text-muted">Login sebagai</small><br>
+                <strong>{{ auth()->user()->name }}</strong>
             </div>
-            <div class="d-flex align-items-center gap-4">
-            </a>
-            <a href="{{ route('user.dashboard') }}" class="text-decoration-none text-dark fw-semibold {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">Beranda</a>
-            <a href="#" class="text-decoration-none text-dark fw-semibold">Statistik</a>
-            <a href="#" class="text-decoration-none text-dark fw-semibold">Kategori</a>
-            <a href="{{ route('faq') }}" class="text-decoration-none text-dark fw-semibold">FAQ</a>
-            <a href="{{ route('notifikasi.index') }}" class="text-decoration-none text-dark fw-semibold {{ request()->routeIs('notifikasi.index') ? 'active' : '' }}">
-                <i class="bi bi-bell"></i> Notifikasi
-            </a>
-                
-                <!-- User Profile Dropdown -->
-                <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" 
-                            type="button" 
-                            data-bs-toggle="dropdown" 
-                            aria-expanded="false"
-                            style="color: #4b5563;">
-                        @if(auth()->user()->profile_picture)
-                            <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" 
-                                 alt="Profile" 
-                                 class="rounded-circle"
-                                 style="width: 32px; height: 32px; object-fit: cover;">
-                        @else
-                            <i class="fas fa-user-circle fa-lg" style="color: #6c757d;"
-                                 alt="Profile" 
-                                 class="rounded-circle"
-                                 style="width: 32px; height: 32px; object-fit: cover;"> </i>
-                        @endif
-                        <span class="fw-semibold">{{ auth()->user()->name }}</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2" 
-                               href="{{ route('laporan.form_laporan') }}">
-                                <i class="bi bi-person"></i>
-                                laporan
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" 
-                                        class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
+            <hr>
+
+            <!-- LOGOUT -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit">🚪 Logout</button>
+            </form>
         </div>
     </div>
 </header>
 
+<!-- STYLE -->
 <style>
-.header {
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
+/* NAVBAR */
+.top-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: #1c1c1e;
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.header a {
-    color: #4b5563;
+/* LOGO */
+.brand {
+    font-weight: bold;
+    font-size: 18px;
+    color: #fbb03b;
     text-decoration: none;
-    transition: color 0.3s ease;
-    font-size: 1rem;
 }
 
-.header a:hover {
-    color: #fbb03b;
-}
-
-.header a.active {
-    color: #fbb03b;
-    font-weight: 600;
-}
-
-/* Dropdown styles */
-.dropdown-toggle {
-    border: none;
+/* BUTTON */
+.menu-btn {
     background: none;
-    padding: 0;
+    border: none;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
 }
 
-.dropdown-toggle:focus {
-    box-shadow: none;
-}
-
-.dropdown-toggle::after {
-    margin-left: 0.5rem;
-    vertical-align: middle;
-}
-
+/* DROPDOWN */
 .dropdown-menu {
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border-radius: 8px;
-    margin-top: 0.5rem;
+    display: none;
+    position: absolute;
+    right: 16px;
+    top: 55px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    overflow: hidden;
+    min-width: 220px;
+    animation: fadeIn 0.2s ease;
+    z-index: 1000;
 }
 
-.dropdown-item {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+/* ITEM */
+.dropdown-menu a,
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-.dropdown-item:hover {
-    background-color: #f8f9fa;
+/* HOVER */
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+    background: #f5f5f5;
 }
 
-.dropdown-item.text-danger:hover {
-    background-color: #fee2e2;
+/* USER INFO */
+.user-info {
+    font-size: 13px;
+    color: #555;
 }
 
-.dropdown-divider {
-    margin: 0.5rem 0;
-    border-color: #e5e7eb;
+/* DIVIDER */
+.dropdown-menu hr {
+    margin: 5px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+/* ANIMASI */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* MOBILE FIX */
+@media (max-width: 768px) {
+    .top-navbar {
+        padding: 10px 12px;
+    }
+
+    .brand {
+        font-size: 16px;
+    }
+
+    .dropdown-menu {
+        right: 10px;
+        top: 50px;
+        min-width: 200px;
+    }
 }
 </style>
+
+<!-- SCRIPT -->
+<script>
+function toggleMenu() {
+    const menu = document.getElementById('dropdownMenu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+// AUTO CLOSE
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('dropdownMenu');
+    if (!e.target.closest('.navbar-right')) {
+        menu.style.display = 'none';
+    }
+});
+</script>

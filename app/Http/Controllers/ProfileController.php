@@ -62,7 +62,7 @@ class ProfileController extends Controller
         // Update user data
         $user->update($validated);
 
-        return redirect()->route('profile.show')->with('status', 'profile-updated');
+        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui!');
     }
 
     // Hapus akun user

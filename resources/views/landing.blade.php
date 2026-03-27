@@ -386,6 +386,9 @@
         <div class="footer-section">
           <i class="bi bi-geo-alt-fill"></i> Jl. Telekomunikasi No. 1, Bandung Terusan Buahbatu
         </div>
+      </div><br>
+      <div class="container text-center">
+        <p class="mb-0">&copy; With ❤️ Tim Laporpak 2026</p>
       </div>
     </footer>
     
