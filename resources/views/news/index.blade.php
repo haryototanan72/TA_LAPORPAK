@@ -1,163 +1,201 @@
-@php
-use Illuminate\Support\Facades\Storage;
-@endphp
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Berita Laporpak</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        .news-card {
-            transition: transform 0.3s;
-            margin-bottom: 20px;
-            height: 100%;
-        }
-        .news-card:hover {
-            transform: translateY(-5px);
-        }
-        .news-image {
-            height: 200px;
-            object-fit: cover;
-        }
-        .news-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .news-excerpt {
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('news.index') }}">
-                <span class="text-primary">Lapor</span>Pak
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('news.index') }}">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('news.index') }}">Berita</a>
-                    </li>
-                    {{-- <li class="nav-item">
-                        <a class="nav-link" href="#">Tentang</a>
-                    </li> --}}
-                </ul>
-            </div>
-        </div>
-    </nav>
+@extends('layouts.app')
 
-    <!-- Featured News Section -->
-    <div class="container mt-4">
-    <button type="button" onclick="window.history.back()" class="btn btn-secondary mb-3"><i class="fa fa-arrow-left me-1"></i> Kembali</button>
-        <div class="row">
-            <div class="col-12">
-                <h2 class="mb-4">Berita Utama</h2>
-            </div>
-        </div>
+@section('content')
+<style>
+    /* Background Page */
+    body {
+        background-color: #f4f7f6;
+    }
 
-        <div class="row">
-            @forelse($featuredNews as $featured)
-                <div class="col-md-4 mb-4">
-                    <div class="card news-card h-100">
-                        @if($featured->gambar)
-                            <img src="{{ Storage::url($featured->gambar) }}" class="card-img-top news-image" alt="{{ $featured->judul }}">
-                        @else
-                            <div class="card-img-top news-image bg-light d-flex align-items-center justify-content-center">
-                                <i class="fas fa-newspaper fa-3x text-muted"></i>
-                            </div>
-                        @endif
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="news-title">{{ $featured->judul }}</h5>
-                            <p class="news-excerpt flex-grow-1">{{ Str::limit(strip_tags($featured->isi), 150) }}</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">
-                                        <i class="fas fa-calendar-alt me-1"></i>
-                                        {{ \Carbon\Carbon::parse($featured->tanggal_terbit)->format('d M Y') }}
-                                    </small>
-                                    <a href="{{ route('news.show', $featured->id) }}" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        Belum ada berita utama.
-                    </div>
-                </div>
-            @endforelse
-        </div>
+    /* News Card Enhancements */
+    .news-card {
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        position: relative;
+    }
+    
+    .news-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(35, 43, 68, 0.15) !important;
+    }
 
-        <!-- All News Section -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <h2 class="mb-4">Semua Berita</h2>
-            </div>
-        </div>
+    .news-image-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
 
-        <!-- News Grid -->
-        <div class="row">
-            @forelse($beritas as $berita)
-            <div class="col-md-4 mb-4">
-                <div class="card news-card">
-                    @if($berita->gambar)
-                        <img src="{{ Storage::url($berita->gambar) }}" class="card-img-top news-image" alt="{{ $berita->judul }}">
-                    @else
-                        <div class="card-img-top news-image bg-light d-flex align-items-center justify-content-center">
-                            <i class="fas fa-newspaper fa-3x text-muted"></i>
-                        </div>
-                    @endif
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="news-title">{{ $berita->judul }}</h5>
-                        <p class="news-excerpt flex-grow-1">{{ Str::limit(strip_tags($berita->isi), 100) }}</p>
-                        <div class="mt-auto">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar-alt me-1"></i>
-                                    {{ \Carbon\Carbon::parse($berita->tanggal_terbit)->format('d M Y') }}
-                                </small>
-                                <a href="{{ route('news.show', $berita->id) }}" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @empty
-            <div class="col-12">
-                <div class="alert alert-info">
-                    Belum ada berita yang dipublikasikan.
-                </div>
-            </div>
-            @endforelse
-        </div>
+    .news-image {
+        height: 240px;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
 
-        <!-- Pagination -->
-        <div class="row mt-4">
-            <div class="col-12">
-                {{ $beritas->links() }}
-            </div>
-        </div>
+    .news-card:hover .news-image {
+        transform: scale(1.1);
+    }
+
+    /* Category Badge Overlay */
+    .badge-category {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(251, 176, 59, 0.9);
+        backdrop-filter: blur(5px);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 50px;
+        z-index: 2;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .news-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #232b44;
+        line-height: 1.3;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .news-excerpt {
+        font-size: 0.92rem;
+        color: #636e72;
+        line-height: 1.6;
+    }
+
+    /* Custom Button */
+    .btn-read {
+        background-color: #232b44;
+        color: #fff;
+        border-radius: 12px;
+        padding: 8px 20px;
+        font-weight: 600;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-read:hover {
+        background-color: #fbb03b;
+        color: #232b44;
+    }
+
+    /* Section Header */
+    .section-header {
+        position: relative;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+    }
+
+    .section-header::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 4px;
+        background: #fbb03b;
+        border-radius: 2px;
+    }
+</style>
+
+<div class="container py-5 mt-5">
+    <div class="mb-5" data-aos="fade-right">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-navy text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Berita</li>
+            </ol>
+        </nav>
+        <h2 class="display-6 fw-bold text-navy">Pusat Informasi <span class="text-warning">LaporPak!</span></h2>
+        <p class="text-muted">Pantau terus perkembangan infrastruktur Kota Bandung di sini.</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h4 class="section-header fw-bold">Berita Utama</h4>
+        </div>
+        
+        @forelse($featuredNews as $featured)
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in">
+                <div class="card news-card h-100 shadow-sm border-0">
+                    <div class="news-image-wrapper">
+                        <span class="badge-category">{{ $featured->kategori ?? 'UMUM' }}</span>
+                        @if($featured->gambar)
+                            <img src="{{ asset('storage/' . $featured->gambar) }}" class="news-image" alt="{{ $featured->judul }}">
+                        @else
+                            <div class="news-image bg-navy d-flex align-items-center justify-content-center">
+                                <i class="bi bi-newspaper text-white opacity-25" style="font-size: 4rem;"></i>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="news-title">{{ $featured->judul }}</h5>
+                        <p class="news-excerpt flex-grow-1">
+                            {{ Str::limit(strip_tags($featured->isi), 100) }}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ \Carbon\Carbon::parse($featured->tanggal_terbit)->diffForHumans() }}
+                            </small>
+                            <a href="{{ route('news.show', $featured->id) }}" class="btn btn-read btn-sm">
+                                Selengkapnya
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-12 text-center py-5">
+                <p class="text-muted italic">Belum ada berita utama tersedia.</p>
+            </div>
+        @endforelse
+    </div>
+
+    <div class="mt-5">
+        <h4 class="section-header fw-bold">Arsip Berita</h4>
+        <div class="row g-4">
+            @foreach($beritas as $berita)
+                <div class="col-md-6 col-lg-3" data-aos="fade-up">
+                    <div class="card news-card h-100 shadow-sm border-0">
+                        <div class="news-image-wrapper">
+                            @if($berita->gambar)
+                                <img src="{{ asset('storage/' . $berita->gambar) }}" class="news-image" style="height: 160px;" alt="{{ $berita->judul }}">
+                            @else
+                                <div class="news-image bg-light" style="height: 160px;"></div>
+                            @endif
+                        </div>
+                        <div class="card-body p-3">
+                            <small class="text-warning fw-bold mb-1 d-block">{{ strtoupper($berita->kategori) }}</small>
+                            <h6 class="fw-bold text-navy" style="font-size: 0.95rem;">{{ Str::limit($berita->judul, 50) }}</h6>
+                            <p class="text-muted small mb-0">{{ \Carbon\Carbon::parse($berita->tanggal_terbit)->translatedFormat('d M Y') }}</p>
+                            <a href="{{ route('news.show', $berita->id) }}" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="d-flex justify-content-center mt-5">
+            {{ $beritas->links() }}
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-navy { color: #232b44; }
+    .bg-navy { background-color: #232b44; }
+</style>
+@endsection

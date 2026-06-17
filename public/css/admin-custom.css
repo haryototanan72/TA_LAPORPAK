@@ -38,7 +38,7 @@ body {
     transition: background 0.2s, color 0.2s;
 }
 .sidebar ul li a.active, .sidebar ul li a:hover {
-    background: #fbb03b;
+    background: #2563eb;
     color: #fff;
 }
 .sidebar ul li a i {
@@ -80,7 +80,7 @@ body {
     height: 38px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #fbb03b;
+    border: 2px solid #2563eb;
 }
 .header .profile .name {
     font-weight: 600;
@@ -113,7 +113,7 @@ body {
     background: #f44336 !important;
 }
 .badge.bg-warning {
-    background: #fbb03b !important;
+    background: #f59e0b !important;
     color: #fff !important;
 }
 .badge.bg-info {
@@ -125,7 +125,7 @@ body {
     color: #444 !important;
 }
 .btn-custom {
-    background: #fbb03b;
+    background: #2563eb;
     color: #fff;
     border-radius: 8px;
     padding: 8px 18px;
@@ -133,7 +133,7 @@ body {
     transition: background 0.2s;
 }
 .btn-custom:hover {
-    background: #e09c2b;
+    background: #1d4ed8;
 }
 .stat-box {
     display: inline-block;
@@ -146,7 +146,7 @@ body {
 }
 .stat-box .stat-icon {
     font-size: 2rem;
-    color: #fbb03b;
+    color: #2563eb;
     margin-bottom: 6px;
 }
 .stat-box .stat-value {

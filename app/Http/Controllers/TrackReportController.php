@@ -3,14 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use App\Models\Report;
 
 class TrackReportController extends Controller
 {
-    public function showTrackPage()
+    public function showTrackPage(Request $request)
     {
-        return view('track-report.index');
+        $nomor_laporan = $request->query('nomor_laporan') ?? session('nomor_laporan');
+        $report = null;
+        $alasan_penolakan = null;
+        $pesan_diterima = null;
+
+        if ($nomor_laporan) {
+            $nomor_laporan = str_replace('"', '', $nomor_laporan);
+            $report = Report::where('nomor_laporan', $nomor_laporan)->first();
+            
+            if ($report) {
+                $statusLower = strtolower($report->status);
+                if ($statusLower === 'ditolak') {
+                    $alasan_penolakan = 'Maaf Laporan Anda Kurang Valid / Ditolak';
+                } elseif (in_array($statusLower, ['diterima', 'disetujui', 'diajukan'])) {
+                    $pesan_diterima = 'Laporan Anda Disetujui, Silakan Tunggu Prosesnya';
+                }
+            }
+        }
+
+        return view('track-report.index', compact('report', 'alasan_penolakan', 'pesan_diterima', 'nomor_laporan'));
     }
 
     public function search(Request $request)
@@ -25,19 +43,22 @@ class TrackReportController extends Controller
         if ($report) {
             $alasan_penolakan = null;
             $pesan_diterima = null;
+            $statusLower = strtolower($report->status);
             
-            if ($report->status === 'Ditolak') {
-                $alasan_penolakan = 'Maaf Laporan Anda Kurang Valid';
-            } elseif ($report->status === 'Diterima') {
+            if ($statusLower === 'ditolak') {
+                $alasan_penolakan = 'Maaf Laporan Anda Kurang Valid / Ditolak';
+            } elseif (in_array($statusLower, ['diterima', 'disetujui', 'diajukan'])) {
                 $pesan_diterima = 'Laporan Anda Disetujui, Silakan Tunggu Prosesnya';
             }
 
-            return view('track-report.result', [
+            return view('track-report.index', [
                 'report' => $report,
                 'alasan_penolakan' => $alasan_penolakan,
                 'pesan_diterima' => $pesan_diterima,
+                'nomor_laporan' => $nomor_laporan
             ]);
         }
-        return redirect()->back()->with('error', 'Nomor laporan tidak ditemukan');
+        
+        return redirect()->route('track.show')->with('error', 'Nomor laporan tidak ditemukan')->withInput();
     }
 }

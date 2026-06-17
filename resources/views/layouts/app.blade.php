@@ -9,6 +9,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'LaporPak') }}</title>
+        <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/png">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com" rel="preconnect">

@@ -9,13 +9,18 @@ class KondisiJalanController extends Controller
 {
     public function index()
     {
-        $laporans = Laporan::whereNotNull('lokasi')->get();
+        $laporans = Laporan::whereNotNull('lokasi_awal')
+            ->whereNotNull('lokasi_akhir')
+            ->get();
 
         $data = $laporans->map(function ($laporan) {
             return [
-                'lokasi' => $laporan->lokasi, // format: "latitude,longitude"
+                'lokasi_awal' => $laporan->lokasi_awal,
+                'lokasi_akhir' => $laporan->lokasi_akhir,
                 'status' => $laporan->status,
-                'kategori' => $laporan->kategori,
+                'kategori' => $laporan->kategori ?? $laporan->kategori_laporan,
+                'nomor_laporan' => $laporan->nomor_laporan,
+                'deskripsi' => $laporan->deskripsi ?? $laporan->deskripsi_laporan,
             ];
         });
 

@@ -17,7 +17,7 @@ class ProfileController extends Controller
     public function show(): View
     {
         if (!Auth::check()) {
-            return redirect('/login');
+            return redirect('/login.blade');
         }
         $user = Auth::user();
         return view('profile.index', compact('user'));

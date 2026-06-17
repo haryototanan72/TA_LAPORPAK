@@ -29,8 +29,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="kategori" class="form-label">Kategori</label>
-                    <input type="text" class="form-control @error('kategori') is-invalid @enderror" id="kategori" name="kategori" value="{{ old('kategori') }}" required>
+                    <label for="kategori_berita" class="form-label">Kategori</label>
+                    <select class="form-select @error('kategori') is-invalid @enderror" id="kategori_berita" name="kategori" required style="cursor: pointer; appearance: auto;">
+                        <option value="" disabled {{ old('kategori') == '' ? 'selected' : '' }}>Pilih Kategori Berita</option>
+                        <option value="Informasi" {{ old('kategori') == 'Informasi' ? 'selected' : '' }}>Informasi</option>
+                        <option value="Perbaikan Jalan Rampung" {{ old('kategori') == 'Pemberitahuan jalan telah selesai diperbaiki' ? 'selected' : '' }}>Pemberitahuan jalan telah selesai diperbaiki</option>
+                    </select>
                     @error('kategori')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -60,8 +64,8 @@
 
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
-                    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-                        <option value="">Pilih Status</option>
+                    <select class="form-control @error('status') is-invalid @enderror" id="status" name="status" required style="cursor: pointer; appearance: auto;">
+                        <option value="" disabled {{ old('status') == '' ? 'selected' : '' }}>Pilih Status</option>
                         <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="publish" {{ old('status') == 'publish' ? 'selected' : '' }}>Publish</option>
                     </select>

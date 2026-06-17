@@ -150,6 +150,11 @@ Route::get(
     [LaporanController::class, 'detail']
 )->name('admin.laporan.detail');
 
+use App\Http\Controllers\Auth\GoogleController;
+
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 /*
 |--------------------------------------------------------------------------
 | 🔐 AUTH ROUTES (Breeze / Fortify)

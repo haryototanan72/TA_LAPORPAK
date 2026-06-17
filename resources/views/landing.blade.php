@@ -9,8 +9,7 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <!-- <link href="assets/img/favicon.png" rel="icon"> -->
-  <!-- <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
+  <link href="{{ asset('assets/img/favicon.png') }}" rel="icon" type="image/png">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -42,9 +41,8 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-      <a href="{{ route('landing') }}" class="logo d-flex align-items-center me-auto">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
+      <a href="{{ route('landing') }}" class="logo d-flex align-items-center me-auto text-decoration-none">
+        <img src="{{ asset('assets/img/logo.png') }}" alt="Logo LaporPak" class="me-2" style="max-height: 40px; width: auto; object-fit: contain;">
         <h1 class="sitename">LaporPak!</h1>
       </a>
 
@@ -81,32 +79,37 @@
 
 
 
-      <section class="min-vh-100 d-flex align-items-center" style="background: url('{{ asset('assets/img/your-background-image.jpg') }}') center center / cover no-repeat;">
-        <div class="container">
-          <div class="row gy-4 d-flex justify-content-between">
-            <div class="col-lg-8 d-flex flex-column justify-content-center text-white">
-              <h1 class="fw-bold display-4" data-aos="fade-up" data-aos-delay="100">LAYANAN PENGADUAN ONLINE</h1>
-              <p class="fs-5" data-aos="fade-up" data-aos-delay="200">
-                Laporkan segera saat Anda mempunyai informasi Jalan atau Jembatan Nasional Rusak
+      <section class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ asset('assets/img/your-background-image.jpg') }}') center center / cover no-repeat;">
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-7 d-flex flex-column justify-content-center text-white">
+            
+            <div class="hero-content mb-5">
+              <h1 class="fw-bold display-4" data-aos="fade-up" data-aos-delay="100">LaporPak!</h1>
+              <p class="fs-5 opacity-90" data-aos="fade-up" data-aos-delay="200">
+                Platform Pelaporan Infrastruktur Kota Bandung<br>
+                <span class="fst-italic">"Mata Warga, Data Nyata, Infrastruktur Terjaga."</span>
               </p>
-                <div class="mt-4" data-aos="fade-up" data-aos-delay="300">
-                  <a href="{{ route('register') }}" class="btn btn-warning btn-lg me-2 px-4 py-2">Daftar</a>
-                  <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-4 py-2">Masuk</a>
-
-                <!-- Tombol Lacak Laporanmu -->
-                <div class="mt-3" data-aos="fade-up" data-aos-delay="400">
-                  <a href="{{ route('track.show') }}" class="btn btn-danger text-white btn-lg px-4 py-2">
-                    <i class="bi bi-geo-alt-fill me-2"></i> Lacak Laporanmu
-                  </a>                                 
+              <div class="mt-4" data-aos="fade-up" data-aos-delay="300">
+                <a href="{{ route('register') }}" class="btn btn-warning btn-lg me-2 px-4">Daftar</a>
+                <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-4">Masuk</a>
+                <div class="mt-3">
+                  <a href="{{ route('laporan.form_laporan') }}" class="btn btn-danger btn-lg px-5 fw-bold">LAPOR!</a>
                 </div>
               </div>
-              
-                
-              </div>
             </div>
+    
+            <div class="about-section mt-2 p-3" style="border-left: 2px solid #ffc107; background: rgba(255,255,255,0.05);" data-aos="fade-up" data-aos-delay="500">
+              <h5 class="fw-bold text-warning mb-2">Apa itu LaporPak?</h5>
+              <p class="small lh-base mb-0" style="max-width: 850px; text-align: justify; opacity: 0.8;">
+                LaporPak! adalah wadah partisipasi publik khusus untuk melaporkan jalan rusak, lubang, dan infrastruktur bermasalah di wilayah Bandung. Proyek berbasis komunitas ini memanfaatkan teknologi untuk memastikan setiap suara masyarakat tersampaikan.setiap laporan warga diubah menjadi data akurat untuk membantu percepatan perbaikan infrastruktur demi Bandung yang lebih nyaman dan aman.
+              </p>
+            </div>
+    
           </div>
         </div>
-      </section>
+      </div>
+</section>
             
             <!-- <form action="#" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
               <input type="text" class="form-control" placeholder="Your ZIP code or City. e.g. New York">
@@ -167,7 +170,7 @@
         <div class="row">
           <div class="col-lg-5 mb-4 mb-lg-0">
             <h2 class="fw-bold" style="font-size:2.5rem; color:#232b44;">
-              <span style="border-bottom:4px solid #ffb300; display:inline-block; margin-bottom:10px;">Statistik</span><br>LaporPak
+              <span style="border-bottom:4px solid #ffb300; display:inline-block; margin-bottom:10px;">Statistik Pelaporan</span><br>LaporPak
             </h2>
           </div>
           <div class="col-lg-7">
@@ -208,6 +211,7 @@
           <div class="col-xl-6">
             <div class="text-block">
               <h2><span class="light-text">PETA</span><br><strong>KONDISI JALAN</strong></h2>
+              <p>Lihat titik jalan rusak dimana saja, dan kondisinya!</p>
               <div class="underline"></div>
               <a class="cta-btn" href="{{ route('petakondisi.index') }}">Baca Lebih Lanjut &gt;</a>
             </div>
@@ -359,7 +363,7 @@
         <p>
           Kegiatan Sosialisasi secara offline oleh <br>
           sepeda motor di wilayah Kota Bandung<br>
-          pada tanggal 3 Januari 2024
+          pada tanggal Januari 2026
         </p>
       </div>
 
@@ -378,10 +382,11 @@
           <a href="#"><i class="bi bi-twitter-x"></i></a>
         </div>
         <div class="footer-section">
-          <i class="bi bi-envelope-fill"></i> laporpak@example.com
-        </div>
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=TimLaporPak@laporpak.id" target="_blank" style="text-decoration: none; color: inherit;">
+      <i class="bi bi-envelope-fill"></i> TimLaporPak@laporpak.id </a>
+    </div>
         <div class="footer-section">
-          <i class="bi bi-telephone-fill"></i> (480) 555-0103
+          <i class="bi bi-telephone-fill"></i> (022) 555-0103
         </div>
         <div class="footer-section">
           <i class="bi bi-geo-alt-fill"></i> Jl. Telekomunikasi No. 1, Bandung Terusan Buahbatu

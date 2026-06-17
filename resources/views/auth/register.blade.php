@@ -10,6 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
@@ -18,6 +22,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
@@ -101,6 +106,58 @@
             margin-top: 10px;
         }
 
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #cbd5e1;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+            color: #1c1c1e;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .google-btn:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .google-btn:active {
+            transform: translateY(0);
+        }
+
         /* 💻 Desktop Mode */
         @media (min-width: 768px) {
             .container {
@@ -169,6 +226,15 @@
             </div>
 
             <button type="submit">Daftar</button>
+
+            <div class="divider">
+                <span>atau</span>
+            </div>
+
+            <a href="{{ route('login.google') }}" class="google-btn">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Icon" width="18" height="18">
+                Daftar dengan Google
+            </a>
         </form>
     </div>
 

@@ -13,7 +13,8 @@ class Laporan extends Model
     protected $fillable = [
         'jenis_laporan',
         'bukti_laporan',
-        'lokasi',
+        'lokasi_awal',
+        'lokasi_akhir',
         'ciri_khusus',
         'kategori_laporan',
         'deskripsi_laporan',
